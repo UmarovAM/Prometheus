@@ -25,8 +25,7 @@ EnvironmentFile=-/etc/default/alertmanager
 User=prometheus
 Group=prometheus
 Type=simple
-ExecStart=/usr/local/bin/alertmanager --config.file=/etc/prometheus/alertmanager.yml 
---storage.path=/var/lib/prometheus/alertmanager $ARGS
+ExecStart=/usr/local/bin/alertmanager --config.file=/etc/prometheus/alertmanager.yml --storage.path=/var/lib/prometheus/alertmanager $ARGS
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=on-failure
 [Install]
@@ -36,4 +35,10 @@ WantedBy=multi-user.target
      systemctl start prometheus-alertmanager
      systemctl status prometheus-alertmanager
 
-### 
+### Добавьте в сonfig-файл Prometheus подключение к Alertmanager:
+     nano /etc/prometheus/prometheus.yml
+alerting:
+ alertmanagers:
+ - static_configs:
+ - targets: # Можно указать как "targets: [‘localhost:9093’]"
+ - localhost:9093

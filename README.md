@@ -1,4 +1,19 @@
 # Prometheus
+### Установка Prometheus
+    useradd --no-create-home --shell /bin/false prometheus
+    wget 
+    https://github.com/prometheus/prometheus/releases/download/v2.40.1/prometheus-2.40.1.linux-386.tar.gz
+    #Извлеките архив и скопируйте файлы в необходимые директории:
+    tar xvfz prometheus-2.28.1.linux-amd64.tar.gz
+    cd prometheus-2.28.1.linux-amd64
+    mkdir /etc/prometheus
+    mkdir /var/lib/prometheus
+    cp ./prometheus promtool /usr/local/bin/
+    cp -R ./console_libraries /etc/prometheus
+    cp -R ./consoles /etc/prometheus
+    cp ./prometheus.yml /etc/prometheus
+
+
 
 ### Install alertmanager on prometheus 
     wget 
@@ -89,3 +104,39 @@
     systemctl status node-exporter
 Теперь можете проверить интерфейсы Prometheus и Alertmanager, расположенные на стандартных портах 9090 и 9093
 
+# Мониторинг Docker в Prometheus
+
+### Docker из коробки поддерживает мониторинг с помощью Prometheus. Для того чтобы включить выгрузку данных на хосте с Docker, нужно создать файл daemon.json:
+     nano /etc/docker/daemon.json
+     # добавить 
+     {
+    "metrics-addr" : "ip_нашего_сервера:9323", # пишем 0.0.0.0
+    "experimental" : true
+    }
+Перезапустите Docker:
+
+    systemctl restart docker && systemctl status docker
+    
+  Для проверки можно открыть адрес http://server_ip:port/metrics
+
+### Добавление endpoint Docker в Prometheus
+Чтобы поставить только что организованный endpoint на 
+мониторинг, необходимо отредактировать файл prometheus.yml:
+
+    nano /etc/prometheus/prometheus.yml
+    #В раздел static_configs добавьте новый endpoint. 
+
+Вид раздела #1
+
+    static_configs:
+    - targets: ['localhost:9090', 'localhost:9100', 'server_ip:9323']
+Вид раздела #2
+
+    static_configs:
+    - targets:
+      - localhost:9090
+      - localhost:9100
+      - server_ip:9323
+Перезапустите Prometheus
+
+     systemctl restart prometheus      

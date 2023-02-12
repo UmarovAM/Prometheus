@@ -44,15 +44,14 @@ WantedBy=multi-user.target
              - localhost:9093
 ### Создайте файл с правилом оповещения:
     nano /etc/prometheus/netology-test.yml
-    roups: # Список групп
-- name: netology-test # Имя группы
- rules: # Список правил текущей группы
- - alert: InstanceDown # Название текущего правила
-   expr: up == 0 # Логическое выражение
-   for: 1m # Сколько ждать отбоя предупреждения перед отправкой оповещения
-   labels:
-     severity: critical # Критичность события
-   annotations: # Описание
-     description: '{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 1 minute.' # Полное описание алерта
-   summary: Instance {{ $labels.instance }} down # Краткое описание алерта
-
+    groups: # Список групп
+    - name: netology-test # Имя группы
+      rules: # Список правил текущей группы
+      - alert: InstanceDown # Название текущего правила
+        expr: up == 0 # Логическое выражение
+        for: 1m # Сколько ждать отбоя предупреждения перед отправкой оповещения
+        labels:
+          severity: critical # Критичность события
+        annotations: # Описание
+          description: '{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 1 minute.' # Полное описание алерта
+          summary: Instance {{ $labels.instance }} down # Краткое описание алерта

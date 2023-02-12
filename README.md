@@ -55,3 +55,9 @@ WantedBy=multi-user.target
         annotations: # Описание
           description: '{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 1 minute.' # Полное описание алерта
           summary: Instance {{ $labels.instance }} down # Краткое описание алерта
+### Подключение правила к Prometheus
+    nano /etc/prometheus/prometheus.yml
+    # Добавьте в раздел rule_files запись:
+    - "netology-test.yml"
+    systemctl restart prometheus
+    systemctl status prometheus

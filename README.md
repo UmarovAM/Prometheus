@@ -79,3 +79,13 @@
         auth_username: 'user'
         auth_identity: 'user'
         auth_password: 'paS$w0rd'
+### Проверка оповещений Alertmanager
+
+После внесения всех изменений перезапустите Alertmanager и выключите экспортер, стоящий на сервере Prometheus:
+
+    sudo systemctl restart prometheus-alertmanager
+    systemctl status prometheus-alertmanager
+    sudo systemctl stop node-exporter
+    systemctl status node-exporter
+Теперь можете проверить интерфейсы Prometheus и Alertmanager, расположенные на стандартных портах 9090 и 9093
+

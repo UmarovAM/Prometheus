@@ -137,6 +137,14 @@
       - localhost:9090
       - localhost:9100
       - server_ip:9323
-Перезапустите Prometheus
 
-     systemctl restart prometheus      
+
+     systemctl restart prometheus
+пример:
+
+    nano /etc/prometheus/prometheus.yml  
+ 
+    static_configs:
+      - targets: ["localhost:9090", "localhost:9100", "localhost:9323"]  
+      
+Перезапустите Prometheus

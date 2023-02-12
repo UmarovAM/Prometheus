@@ -148,3 +148,7 @@
       - targets: ["localhost:9090", "localhost:9100", "localhost:9323"]  
       
 Перезапустите Prometheus
+
+### set GRAFANA
+
+![image](https://user-images.githubusercontent.com/118117183/218322594-bd2a63bb-65cc-4328-b28c-9330551b9c99.png)

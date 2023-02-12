@@ -17,19 +17,19 @@
 
 ### Сервис для работы с Node Exporter
     nano /etc/systemd/system/prometheus-alertmanager.service
-[Unit]
-Description=Alertmanager Service
-After=network.target
-[Service]
-EnvironmentFile=-/etc/default/alertmanager
-User=prometheus
-Group=prometheus
-Type=simple
-ExecStart=/usr/local/bin/alertmanager --config.file=/etc/prometheus/alertmanager.yml --storage.path=/var/lib/prometheus/alertmanager $ARGS
-ExecReload=/bin/kill -HUP $MAINPID
-Restart=on-failure
-[Install]
-WantedBy=multi-user.target
+    [Unit]
+    Description=Alertmanager Service
+    After=network.target
+    [Service]
+    EnvironmentFile=-/etc/default/alertmanager
+    User=prometheus
+    Group=prometheus
+    Type=simple
+    ExecStart=/usr/local/bin/alertmanager --config.file=/etc/prometheus/alertmanager.yml --storage.path=/var/lib/prometheus/alertmanager $ARGS
+    ExecReload=/bin/kill -HUP $MAINPID
+    Restart=on-failure
+    [Install]
+    WantedBy=multi-user.target
 ### Пропишите автозапуск:
      systemctl enable prometheus-alertmanager
      systemctl start prometheus-alertmanager

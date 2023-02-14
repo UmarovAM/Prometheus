@@ -1,9 +1,10 @@
 # Prometheus
 ### Установка Prometheus
     useradd --no-create-home --shell /bin/false prometheus
+        #Последнюю версию найдите на GitHub
     wget 
     https://github.com/prometheus/prometheus/releases/download/v2.40.1/prometheus-2.40.1.linux-386.tar.gz
-    #Извлеките архив и скопируйте файлы в необходимые директории:
+        #Извлеките архив и скопируйте файлы в необходимые директории:
     tar xvfz prometheus-2.28.1.linux-amd64.tar.gz
     cd prometheus-2.28.1.linux-amd64
     mkdir /etc/prometheus
@@ -12,8 +13,34 @@
     cp -R ./console_libraries /etc/prometheus
     cp -R ./consoles /etc/prometheus
     cp ./prometheus.yml /etc/prometheus
-
-
+        #Передайте права на файлы пользователю Prometheus:
+    chown -R prometheus:prometheus /etc/prometheus /var/lib/prometheus 
+    chown prometheus:prometheus /usr/local/bin/prometheus
+    chown prometheus:prometheus /usr/local/bin/promtool
+        #Запустите и проверьте результат:
+    /usr/local/bin/prometheus --config.file /etc/prometheus/prometheus.yml --storage.tsdb.path /var/lib/prometheus/ --web.console.templates=/etc/prometheus/consoles --web.console.libraries=/etc/prometheus/console_libraries
+    #Создание сервис для работы с Prometheus
+    nano /etc/systemd/system/prometheus.service
+    [Unit]
+    Description=Prometheus Service Netology Lesson 9.4
+    After=network.target
+    [Service]
+    User=prometheus
+    Group=prometheus
+    Type=simple
+    ExecStart=/usr/local/bin/prometheus \
+    --config.file /etc/prometheus/prometheus.yml \
+    --storage.tsdb.path /var/lib/prometheus/ \
+    --web.console.templates=/etc/prometheus/consoles \
+    --web.console.libraries=/etc/prometheus/console_libraries
+    ExecReload=/bin/kill -HUP $MAINPID Restart=on-failure
+    [Install]
+    WantedBy=multi-user.target
+        #Передайте права на файл:
+    chown -R prometheus:prometheus /var/lib/prometheus
+    sudo systemctl enable prometheus
+    sudo systemctl start prometheus
+    sudo systemctl status prometheus
 
 ### Install alertmanager on prometheus 
     wget 

@@ -50,8 +50,7 @@
 
     tar -xvf alertmanager-*linux-amd64.tar.gz
 
-### Скопируйте содержимое архива в папки:
-
+        #Скопируйте содержимое архива в папки:
     cp ./alertmanager-*.linux-amd64/alertmanager /usr/local/bin
     cp ./alertmanager-*.linux-amd64/amtool /usr/local/bin
     cp ./alertmanager-*.linux-amd64/alertmanager /usr/local/bin
@@ -59,7 +58,7 @@
     cp ./alertmanager-*.linux-amd64/alertmanager.yml /etc/prometheus
     chown -R prometheus:prometheus /etc/prometheus/alertmanager.yml
 
-### Сервис для работы с Node Exporter
+        # Сервис для работы с Node Exporter
     nano /etc/systemd/system/prometheus-alertmanager.service
     [Unit]
     Description=Alertmanager Service
@@ -74,18 +73,19 @@
     Restart=on-failure
     [Install]
     WantedBy=multi-user.target
-### Пропишите автозапуск:
+        #Пропишите автозапуск:
      systemctl enable prometheus-alertmanager
      systemctl start prometheus-alertmanager
      systemctl status prometheus-alertmanager
 
-### Добавьте в сonfig-файл Prometheus подключение к Alertmanager:
+        #Добавьте в сonfig-файл Prometheus подключение к Alertmanager:
      nano /etc/prometheus/prometheus.yml
      alerting:
        alertmanagers:
          - static_configs:
            - targets: # Можно указать как "targets: [‘localhost:9093’]"
              - localhost:9093
+             
 ### Создайте файл с правилом оповещения:
     nano /etc/prometheus/netology-test.yml
     groups: # Список групп
@@ -142,43 +142,40 @@
     "metrics-addr" : "ip_нашего_сервера:9323", # пишем 0.0.0.0
     "experimental" : true
     }
-Перезапустите Docker:
+        #Перезапустите Docker:
 
     systemctl restart docker && systemctl status docker
     
   Для проверки можно открыть адрес http://server_ip:port/metrics
 
-### Добавление endpoint Docker в Prometheus
-Чтобы поставить только что организованный endpoint на 
+### Добавление endpoint Docker в Prometheus. Чтобы поставить только что организованный endpoint на 
 мониторинг, необходимо отредактировать файл prometheus.yml:
 
     nano /etc/prometheus/prometheus.yml
     #В раздел static_configs добавьте новый endpoint. 
+   
+    #пример:
+      static_configs:
+      - targets: ["localhost:9090", "localhost:9100", "localhost:9323"]  
 
-Вид раздела #1
-
+        #Вид раздела #1
     static_configs:
     - targets: ['localhost:9090', 'localhost:9100', 'server_ip:9323']
-Вид раздела #2
-
+       
+       #Вид раздела #2
     static_configs:
     - targets:
       - localhost:9090
       - localhost:9100
       - server_ip:9323
-
-
-     systemctl restart prometheus
-пример:
-
-    nano /etc/prometheus/prometheus.yml  
- 
-    static_configs:
-      - targets: ["localhost:9090", "localhost:9100", "localhost:9323"]  
       
-Перезапустите Prometheus
+        #Перезапустите Prometheus
+     systemctl restart prometheus
 
-### set GRAFANA
+      
+
+
+### Настройка GRAFANA
 
 ![image](https://user-images.githubusercontent.com/118117183/218322672-e31203ed-eec6-45d3-9c3c-2ef10add849c.png)
 

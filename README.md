@@ -1,5 +1,6 @@
 # Prometheus
 ### Установка Prometheus
+        #Добавьте пользователя prometheus
     useradd --no-create-home --shell /bin/false prometheus
         #Последнюю версию найдите на GitHub
     wget 
@@ -19,7 +20,7 @@
     chown prometheus:prometheus /usr/local/bin/promtool
         #Запустите и проверьте результат:
     /usr/local/bin/prometheus --config.file /etc/prometheus/prometheus.yml --storage.tsdb.path /var/lib/prometheus/ --web.console.templates=/etc/prometheus/consoles --web.console.libraries=/etc/prometheus/console_libraries
-    #Создание сервис для работы с Prometheus
+        #Создание сервис для работы с Prometheus
     nano /etc/systemd/system/prometheus.service
     [Unit]
     Description=Prometheus Service Netology Lesson 9.4
@@ -38,6 +39,7 @@
     WantedBy=multi-user.target
         #Передайте права на файл:
     chown -R prometheus:prometheus /var/lib/prometheus
+        #Запустите prometheus
     sudo systemctl enable prometheus
     sudo systemctl start prometheus
     sudo systemctl status prometheus

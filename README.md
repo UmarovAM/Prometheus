@@ -175,7 +175,7 @@
       
 
 
-### Настройка GRAFANA
+### Настройка GRAFANA для DOCKER
 
 ![image](https://user-images.githubusercontent.com/118117183/218322672-e31203ed-eec6-45d3-9c3c-2ef10add849c.png)
 

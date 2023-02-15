@@ -2,9 +2,11 @@
 ### Установка Prometheus
         #Добавьте пользователя prometheus
     useradd --no-create-home --shell /bin/false prometheus
+
         #Последнюю версию найдите на GitHub
     wget 
     https://github.com/prometheus/prometheus/releases/download/v2.40.1/prometheus-2.40.1.linux-386.tar.gz
+
         #Извлеките архив и скопируйте файлы в необходимые директории:
     tar xvfz prometheus-2.28.1.linux-amd64.tar.gz
     cd prometheus-2.28.1.linux-amd64
@@ -14,12 +16,15 @@
     cp -R ./console_libraries /etc/prometheus
     cp -R ./consoles /etc/prometheus
     cp ./prometheus.yml /etc/prometheus
+
         #Передайте права на файлы пользователю Prometheus:
     chown -R prometheus:prometheus /etc/prometheus /var/lib/prometheus 
     chown prometheus:prometheus /usr/local/bin/prometheus
     chown prometheus:prometheus /usr/local/bin/promtool
+
         #Запустите и проверьте результат:
     /usr/local/bin/prometheus --config.file /etc/prometheus/prometheus.yml --storage.tsdb.path /var/lib/prometheus/ --web.console.templates=/etc/prometheus/consoles --web.console.libraries=/etc/prometheus/console_libraries
+
         #Создание сервис для работы с Prometheus
     nano /etc/systemd/system/prometheus.service
     [Unit]
@@ -37,8 +42,10 @@
     ExecReload=/bin/kill -HUP $MAINPID Restart=on-failure
     [Install]
     WantedBy=multi-user.target
+
         #Передайте права на файл:
     chown -R prometheus:prometheus /var/lib/prometheus
+
         #Запустите prometheus
     sudo systemctl enable prometheus
     sudo systemctl start prometheus
@@ -73,6 +80,7 @@
     Restart=on-failure
     [Install]
     WantedBy=multi-user.target
+
         #Пропишите автозапуск:
      systemctl enable prometheus-alertmanager
      systemctl start prometheus-alertmanager
@@ -99,12 +107,15 @@
         annotations: # Описание
           description: '{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 1 minute.' # Полное описание алерта
           summary: Instance {{ $labels.instance }} down # Краткое описание алерта
+
 ### Подключение правила к Prometheus
     nano /etc/prometheus/prometheus.yml
+
     # Добавьте в раздел rule_files запись:
     - "netology-test.yml"
     systemctl restart prometheus
     systemctl status prometheus
+
 ### Настройка оповещений в Alertmanager
     nano /etc/prometheus/alertmanager.yml
     global:
@@ -123,6 +134,7 @@
         auth_username: 'user'
         auth_identity: 'user'
         auth_password: 'paS$w0rd'
+
 ### Проверка оповещений Alertmanager
 
 После внесения всех изменений перезапустите Alertmanager и выключите экспортер, стоящий на сервере Prometheus:
@@ -137,21 +149,23 @@
 
 ### Docker из коробки поддерживает мониторинг с помощью Prometheus. Для того чтобы включить выгрузку данных на хосте с Docker, нужно создать файл daemon.json:
      nano /etc/docker/daemon.json
+
      # добавить 
      {
     "metrics-addr" : "ip_нашего_сервера:9323", # пишем 0.0.0.0
     "experimental" : true
     }
+
         #Перезапустите Docker:
 
     systemctl restart docker && systemctl status docker
     
   Для проверки можно открыть адрес http://server_ip:port/metrics
 
-### Добавление endpoint Docker в Prometheus. Чтобы поставить только что организованный endpoint на 
-мониторинг, необходимо отредактировать файл prometheus.yml:
+### Добавление endpoint Docker в Prometheus. Чтобы поставить только что организованный endpoint на мониторинг, необходимо отредактировать файл prometheus.yml:
 
     nano /etc/prometheus/prometheus.yml
+
     #В раздел static_configs добавьте новый endpoint. 
    
     #пример:
@@ -173,8 +187,6 @@
      systemctl restart prometheus
 
       
-
-
 ### Настройка GRAFANA для DOCKER
 
 ![image](https://user-images.githubusercontent.com/118117183/218322672-e31203ed-eec6-45d3-9c3c-2ef10add849c.png)

@@ -94,7 +94,7 @@
     sudo systemctl status node-exporter
 ```
 
-### Добавление Node Exporter в Prometheus
+## Добавление Node Exporter в Prometheus
 ```
 #Отредактируйте конфигурацию Prometheus:
     nano /etc/prometheus/prometheus.yml
@@ -109,7 +109,7 @@
 #Перезапустите Prometheus:
     systemctl restart prometheus
 ```
-### Установка Grafana
+## Установка Grafana
 ```
 #Скачайте и установите DEB-пакет:
     wget https://dl.grafana.com/oss/release/grafana_9.2.4_amd64.deb
@@ -142,8 +142,7 @@
 
     tar -xvf alertmanager-*linux-amd64.tar.gz
 
-        #Скопируйте содержимое архива в папки:
-
+#Скопируйте содержимое архива в папки:
     cp ./alertmanager-*.linux-amd64/alertmanager /usr/local/bin
     cp ./alertmanager-*.linux-amd64/amtool /usr/local/bin
     cp ./alertmanager-*.linux-amd64/alertmanager /usr/local/bin
@@ -151,9 +150,9 @@
     cp ./alertmanager-*.linux-amd64/alertmanager.yml /etc/prometheus
     chown -R prometheus:prometheus /etc/prometheus/alertmanager.yml
 
-        # Сервис для работы с Node Exporter
-
+# Сервис для работы с Node Exporter
     nano /etc/systemd/system/prometheus-alertmanager.service
+    
     [Unit]
     Description=Alertmanager Service
     After=network.target
@@ -168,22 +167,21 @@
     [Install]
     WantedBy=multi-user.target
 
-        #Пропишите автозапуск:
-
+#Пропишите автозапуск:
      systemctl enable prometheus-alertmanager
      systemctl start prometheus-alertmanager
      systemctl status prometheus-alertmanager
 
-        #Добавьте в сonfig-файл Prometheus подключение к Alertmanager:
-
+#Добавьте в сonfig-файл Prometheus подключение к Alertmanager:
      nano /etc/prometheus/prometheus.yml
+    
      alerting:
        alertmanagers:
          - static_configs:
            - targets: # Можно указать как "targets: [‘localhost:9093’]"
              - localhost:9093
 ```             
-### Создайте файл с правилом оповещения:
+## Создайте файл с правилом оповещения:
 ```
     nano /etc/prometheus/test.yml
     groups: # Список групп
@@ -198,18 +196,15 @@
           description: '{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 1 minute.' # Полное описание алерта
           summary: Instance {{ $labels.instance }} down # Краткое описание алерта
 
-    # Подключение правила к Prometheus
-
+#Подключение правила к Prometheus
     nano /etc/prometheus/prometheus.yml
 
-    # Добавьте в раздел rule_files запись:
-
+#Добавьте в раздел rule_files запись:
     - "test.yml"
     systemctl restart prometheus
     systemctl status prometheus
 
-    # Настройка оповещений в Alertmanager
-
+# Настройка оповещений в Alertmanager
     nano /etc/prometheus/alertmanager.yml
     global:
     route:
@@ -228,8 +223,7 @@
         auth_identity: 'user'
         auth_password: 'paS$w0rd'
 
-      # Проверка оповещений Alertmanager
-
+# Проверка оповещений Alertmanager
     После внесения всех изменений перезапустите Alertmanager и выключите экспортер, стоящий на сервере Prometheus:
 
     sudo systemctl restart prometheus-alertmanager
@@ -239,7 +233,7 @@
     Теперь можете проверить интерфейсы Prometheus и Alertmanager, расположенные на стандартных портах 9090 и 9093
 
 ```
-# Мониторинг Docker в Prometheus
+## Мониторинг Docker в Prometheus
 
 ### Docker из коробки поддерживает мониторинг с помощью Prometheus. Для того чтобы включить выгрузку данных на хосте с Docker, нужно создать файл daemon.json:
      nano /etc/docker/daemon.json
@@ -250,17 +244,16 @@
     "experimental" : true
     }
 
-        #Перезапустите Docker:
+#Перезапустите Docker:
 
     systemctl restart docker && systemctl status docker
-    
-  Для проверки можно открыть адрес http://server_ip:port/metrics
+    Для проверки можно открыть адрес http://server_ip:port/metrics
 
 ### Добавление endpoint Docker в Prometheus. Чтобы поставить только что организованный endpoint на мониторинг, необходимо отредактировать файл prometheus.yml:
 
     nano /etc/prometheus/prometheus.yml
 
-    #В раздел static_configs добавьте новый endpoint. 
+В раздел static_configs добавьте новый endpoint. 
    
     #пример:
       static_configs:

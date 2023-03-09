@@ -1,15 +1,17 @@
 # Prometheus
-### Установка Prometheus
-   ```     
-        #Добавьте пользователя prometheus
+
+## Установка Prometheus
+```     
+#Добавьте пользователя prometheus
 
     useradd --no-create-home --shell /bin/false prometheus
 
-        #Последнюю версию найдите на GitHub
+#Последнюю версию найдите на GitHub
+
     wget 
     https://github.com/prometheus/prometheus/releases/download/v2.40.1/prometheus-2.40.1.linux-386.tar.gz
 
-        #Извлеките архив и скопируйте файлы в необходимые директории:
+#Извлеките архив и скопируйте файлы в необходимые директории:
 
     tar xvfz prometheus-2.28.1.linux-amd64.tar.gz
     cd prometheus-2.28.1.linux-amd64
@@ -20,19 +22,20 @@
     cp -R ./consoles /etc/prometheus
     cp ./prometheus.yml /etc/prometheus
 
-        #Передайте права на файлы пользователю Prometheus:
+#Передайте права на файлы пользователю Prometheus:
 
     chown -R prometheus:prometheus /etc/prometheus /var/lib/prometheus 
     chown prometheus:prometheus /usr/local/bin/prometheus
     chown prometheus:prometheus /usr/local/bin/promtool
 
-        #Запустите и проверьте результат:
+#Запустите и проверьте результат:
 
     /usr/local/bin/prometheus --config.file /etc/prometheus/prometheus.yml --storage.tsdb.path /var/lib/prometheus/ --web.console.templates=/etc/prometheus/consoles --web.console.libraries=/etc/prometheus/console_libraries
 
-        #Создание сервис для работы с Prometheus
+#Создание сервис для работы с Prometheus
 
     nano /etc/systemd/system/prometheus.service
+
     [Unit]
     Description=Prometheus Service myPrometheus
     After=network.target
@@ -49,18 +52,20 @@
     [Install]
     WantedBy=multi-user.target
 
-        #Передайте права на файл:
+#Передайте права на файл:
 
     chown -R prometheus:prometheus /var/lib/prometheus
 
-        #Запустите prometheus
+#Запустите prometheus
 
     sudo systemctl enable prometheus
     sudo systemctl start prometheus
     sudo systemctl status prometheus
 ```
+## Установка Node Exporter
 
-### Install alertmanager on prometheus 
+
+## Install alertmanager on prometheus 
 ```
     wget 
     https://github.com/prometheus/alertmanager/releases/download/v0.24.0/alertmanager-0.24.0.linux-amd64.tar.gz
@@ -206,7 +211,7 @@
      systemctl restart prometheus
 
       
-### Настройка GRAFANA для DOCKER
+## Настройка GRAFANA для DOCKER
 
 ![image](https://user-images.githubusercontent.com/118117183/218322672-e31203ed-eec6-45d3-9c3c-2ef10add849c.png)
 

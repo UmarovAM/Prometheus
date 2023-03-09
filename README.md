@@ -63,8 +63,88 @@
     sudo systemctl status prometheus
 ```
 ## Установка Node Exporter
+```
+#Скачайте архив с Node Exporter и извлеките его:
+    wget 
+    https://github.com/prometheus/node_exporter/releases/download/v1.4.0/node_exporter-1.4.0.linux-amd64.
+    tar.gz
+    tar xvfz node_exporter-*.*-amd64.tar.gz
 
+#Перейдите в появившуюся папку:
+    cd node_exporter-*.*-amd64
+    ./node_exporter 
 
+#Скопируйте Node Explorer в папку Prometheus
+    mkdir /etc/prometheus/node-exporter
+    cp ./* /etc/prometheus/node-exporter
+
+#Передайте права на папку пользователю Prometheus
+    chown -R prometheus:prometheus /etc/prometheus/node-exporter/
+
+#Создайте сервис для работы с Node Explorer
+    nano /etc/systemd/system/node-exporter.service
+
+#Вставьте в файл сервиса следующее содержимое:
+    [Unit]
+    Description=Node Exporter Lesson 9.4
+    After=network.target
+    [Service]
+    User=prometheus
+    Group=prometheus
+    Type=simple
+    ExecStart=/etc/prometheus/node-exporter/node_exporter
+    [Install]
+    WantedBy=multi-user.target 
+
+#Тестирование сервиса Node Explorer
+
+    sudo systemctl enable node-exporter
+    sudo systemctl start node-exporter
+    sudo systemctl status node-exporter
+```
+
+### Добавление Node Exporter в Prometheus
+```
+#Отредактируйте конфигурацию Prometheus:
+    nano /etc/prometheus/prometheus.yml
+
+#Добавьте в scrape_config адрес экспортера:
+    scrape_configs:
+    — job_name: 'prometheus'
+    scrape_interval: 5s
+    static_configs:
+    — targets: ['localhost:9090', 'localhost:9100'] 
+
+#Перезапустите Prometheus:
+    systemctl restart prometheus
+```
+### Установка Grafana
+
+#Скачайте и установите DEB-пакет:
+    wget https://dl.grafana.com/oss/release/grafana_9.2.4_amd64.deb
+    dpkg -i grafana_9.2.4_amd64.deb
+
+#Включите автозапуск и запускаем сервер Grafana:
+    systemctl enable grafana-server 
+    systemctl start grafana-server 
+    systemctl status grafana-server
+
+#Проверьте статус подключившись на адрес: 
+   https://<наш сервер>:3000  Стандартный логин и пароль admin \ admin
+
+#Добавление Dashboard в Grafana
+
+    Перейдите в раздел Configuration > Data Sources и нажмите на 
+    Add data sourcе В появившемся списке выберите Prometheus
+    http://localhost:9090
+    Нажмите кнопку Save & Test
+    На сайте grafana.com найдите нужный Dashboard и к скопируйте его 
+    ID.
+    Перейдите в раздел [+] > Import и в поле Import via grafana.com 
+    внесите скопированный ID или ссылку на Dashboard.
+    В выпадающем списке VictoriaMetrics выберите Prometheus
+    Нажмите кнопку Import
+    
 ## Install alertmanager on prometheus 
 ```
     wget 

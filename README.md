@@ -1,6 +1,8 @@
 # Prometheus
 ### Установка Prometheus
+   ```     
         #Добавьте пользователя prometheus
+
     useradd --no-create-home --shell /bin/false prometheus
 
         #Последнюю версию найдите на GitHub
@@ -8,6 +10,7 @@
     https://github.com/prometheus/prometheus/releases/download/v2.40.1/prometheus-2.40.1.linux-386.tar.gz
 
         #Извлеките архив и скопируйте файлы в необходимые директории:
+
     tar xvfz prometheus-2.28.1.linux-amd64.tar.gz
     cd prometheus-2.28.1.linux-amd64
     mkdir /etc/prometheus
@@ -18,17 +21,20 @@
     cp ./prometheus.yml /etc/prometheus
 
         #Передайте права на файлы пользователю Prometheus:
+
     chown -R prometheus:prometheus /etc/prometheus /var/lib/prometheus 
     chown prometheus:prometheus /usr/local/bin/prometheus
     chown prometheus:prometheus /usr/local/bin/promtool
 
         #Запустите и проверьте результат:
+
     /usr/local/bin/prometheus --config.file /etc/prometheus/prometheus.yml --storage.tsdb.path /var/lib/prometheus/ --web.console.templates=/etc/prometheus/consoles --web.console.libraries=/etc/prometheus/console_libraries
 
         #Создание сервис для работы с Prometheus
+
     nano /etc/systemd/system/prometheus.service
     [Unit]
-    Description=Prometheus Service Netology Lesson 9.4
+    Description=Prometheus Service myPrometheus
     After=network.target
     [Service]
     User=prometheus
@@ -44,20 +50,25 @@
     WantedBy=multi-user.target
 
         #Передайте права на файл:
+
     chown -R prometheus:prometheus /var/lib/prometheus
 
         #Запустите prometheus
+
     sudo systemctl enable prometheus
     sudo systemctl start prometheus
     sudo systemctl status prometheus
+```
 
 ### Install alertmanager on prometheus 
+```
     wget 
     https://github.com/prometheus/alertmanager/releases/download/v0.24.0/alertmanager-0.24.0.linux-amd64.tar.gz
 
     tar -xvf alertmanager-*linux-amd64.tar.gz
 
         #Скопируйте содержимое архива в папки:
+
     cp ./alertmanager-*.linux-amd64/alertmanager /usr/local/bin
     cp ./alertmanager-*.linux-amd64/amtool /usr/local/bin
     cp ./alertmanager-*.linux-amd64/alertmanager /usr/local/bin
@@ -66,6 +77,7 @@
     chown -R prometheus:prometheus /etc/prometheus/alertmanager.yml
 
         # Сервис для работы с Node Exporter
+
     nano /etc/systemd/system/prometheus-alertmanager.service
     [Unit]
     Description=Alertmanager Service
@@ -82,22 +94,25 @@
     WantedBy=multi-user.target
 
         #Пропишите автозапуск:
+
      systemctl enable prometheus-alertmanager
      systemctl start prometheus-alertmanager
      systemctl status prometheus-alertmanager
 
         #Добавьте в сonfig-файл Prometheus подключение к Alertmanager:
+
      nano /etc/prometheus/prometheus.yml
      alerting:
        alertmanagers:
          - static_configs:
            - targets: # Можно указать как "targets: [‘localhost:9093’]"
              - localhost:9093
-             
+```             
 ### Создайте файл с правилом оповещения:
-    nano /etc/prometheus/netology-test.yml
+```
+    nano /etc/prometheus/test.yml
     groups: # Список групп
-    - name: netology-test # Имя группы
+    - name: test # Имя группы
       rules: # Список правил текущей группы
       - alert: InstanceDown # Название текущего правила
         expr: up == 0 # Логическое выражение
@@ -108,15 +123,18 @@
           description: '{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 1 minute.' # Полное описание алерта
           summary: Instance {{ $labels.instance }} down # Краткое описание алерта
 
-### Подключение правила к Prometheus
+    # Подключение правила к Prometheus
+
     nano /etc/prometheus/prometheus.yml
 
     # Добавьте в раздел rule_files запись:
-    - "netology-test.yml"
+
+    - "test.yml"
     systemctl restart prometheus
     systemctl status prometheus
 
-### Настройка оповещений в Alertmanager
+    # Настройка оповещений в Alertmanager
+
     nano /etc/prometheus/alertmanager.yml
     global:
     route:
@@ -135,16 +153,17 @@
         auth_identity: 'user'
         auth_password: 'paS$w0rd'
 
-### Проверка оповещений Alertmanager
+      # Проверка оповещений Alertmanager
 
-После внесения всех изменений перезапустите Alertmanager и выключите экспортер, стоящий на сервере Prometheus:
+    После внесения всех изменений перезапустите Alertmanager и выключите экспортер, стоящий на сервере Prometheus:
 
     sudo systemctl restart prometheus-alertmanager
     systemctl status prometheus-alertmanager
     sudo systemctl stop node-exporter
     systemctl status node-exporter
-Теперь можете проверить интерфейсы Prometheus и Alertmanager, расположенные на стандартных портах 9090 и 9093
+    Теперь можете проверить интерфейсы Prometheus и Alertmanager, расположенные на стандартных портах 9090 и 9093
 
+```
 # Мониторинг Docker в Prometheus
 
 ### Docker из коробки поддерживает мониторинг с помощью Prometheus. Для того чтобы включить выгрузку данных на хосте с Docker, нужно создать файл daemon.json:

@@ -3,16 +3,13 @@
 ## Установка Prometheus
 ```     
 #Добавьте пользователя prometheus
-
     useradd --no-create-home --shell /bin/false prometheus
 
 #Последнюю версию найдите на GitHub
-
     wget 
     https://github.com/prometheus/prometheus/releases/download/v2.40.1/prometheus-2.40.1.linux-386.tar.gz
 
 #Извлеките архив и скопируйте файлы в необходимые директории:
-
     tar xvfz prometheus-2.28.1.linux-amd64.tar.gz
     cd prometheus-2.28.1.linux-amd64
     mkdir /etc/prometheus
@@ -23,17 +20,14 @@
     cp ./prometheus.yml /etc/prometheus
 
 #Передайте права на файлы пользователю Prometheus:
-
     chown -R prometheus:prometheus /etc/prometheus /var/lib/prometheus 
     chown prometheus:prometheus /usr/local/bin/prometheus
     chown prometheus:prometheus /usr/local/bin/promtool
 
 #Запустите и проверьте результат:
-
     /usr/local/bin/prometheus --config.file /etc/prometheus/prometheus.yml --storage.tsdb.path /var/lib/prometheus/ --web.console.templates=/etc/prometheus/consoles --web.console.libraries=/etc/prometheus/console_libraries
 
 #Создание сервис для работы с Prometheus
-
     nano /etc/systemd/system/prometheus.service
 
     [Unit]
@@ -53,11 +47,9 @@
     WantedBy=multi-user.target
 
 #Передайте права на файл:
-
     chown -R prometheus:prometheus /var/lib/prometheus
 
 #Запустите prometheus
-
     sudo systemctl enable prometheus
     sudo systemctl start prometheus
     sudo systemctl status prometheus
@@ -97,7 +89,6 @@
     WantedBy=multi-user.target 
 
 #Тестирование сервиса Node Explorer
-
     sudo systemctl enable node-exporter
     sudo systemctl start node-exporter
     sudo systemctl status node-exporter
@@ -119,7 +110,7 @@
     systemctl restart prometheus
 ```
 ### Установка Grafana
-
+```
 #Скачайте и установите DEB-пакет:
     wget https://dl.grafana.com/oss/release/grafana_9.2.4_amd64.deb
     dpkg -i grafana_9.2.4_amd64.deb
@@ -133,7 +124,6 @@
    https://<наш сервер>:3000  Стандартный логин и пароль admin \ admin
 
 #Добавление Dashboard в Grafana
-
     Перейдите в раздел Configuration > Data Sources и нажмите на 
     Add data sourcе В появившемся списке выберите Prometheus
     http://localhost:9090
@@ -144,7 +134,7 @@
     внесите скопированный ID или ссылку на Dashboard.
     В выпадающем списке VictoriaMetrics выберите Prometheus
     Нажмите кнопку Import
-    
+```
 ## Install alertmanager on prometheus 
 ```
     wget 

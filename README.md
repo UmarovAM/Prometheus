@@ -139,12 +139,9 @@
 ```
     wget 
     https://github.com/prometheus/alertmanager/releases/download/v0.24.0/alertmanager-0.24.0.linux-amd64.tar.gz
-
     tar -xvf alertmanager-*linux-amd64.tar.gz
 
 #Скопируйте содержимое архива в папки:
-    cp ./alertmanager-*.linux-amd64/alertmanager /usr/local/bin
-    cp ./alertmanager-*.linux-amd64/amtool /usr/local/bin
     cp ./alertmanager-*.linux-amd64/alertmanager /usr/local/bin
     cp ./alertmanager-*.linux-amd64/amtool /usr/local/bin
     cp ./alertmanager-*.linux-amd64/alertmanager.yml /etc/prometheus
@@ -180,10 +177,14 @@
          - static_configs:
            - targets: # Можно указать как "targets: [‘localhost:9093’]"
              - localhost:9093
+    sudo systemctl restart prometheus
+    systemctl status prometheus
+             
 ```             
 ## Создайте файл с правилом оповещения:
 ```
     nano /etc/prometheus/test.yml
+
     groups: # Список групп
     - name: test # Имя группы
       rules: # Список правил текущей группы
@@ -201,11 +202,13 @@
 
 #Добавьте в раздел rule_files запись:
     - "test.yml"
+
     systemctl restart prometheus
     systemctl status prometheus
 
 # Настройка оповещений в Alertmanager
     nano /etc/prometheus/alertmanager.yml
+
     global:
     route:
       group_by: ['alertname'] # Параметр группировки оповещений - по имени
@@ -223,22 +226,25 @@
         auth_identity: 'user'
         auth_password: 'paS$w0rd'
 
+
 # Проверка оповещений Alertmanager
-    После внесения всех изменений перезапустите Alertmanager и выключите экспортер, стоящий на сервере Prometheus:
+После внесения всех изменений перезапустите Alertmanager и выключите экспортер, стоящий на сервере Prometheus:
 
     sudo systemctl restart prometheus-alertmanager
     systemctl status prometheus-alertmanager
     sudo systemctl stop node-exporter
     systemctl status node-exporter
-    Теперь можете проверить интерфейсы Prometheus и Alertmanager, расположенные на стандартных портах 9090 и 9093
+
+#Теперь можете проверить интерфейсы Prometheus и Alertmanager, расположенные на стандартных портах 9090 и 9093
 
 ```
-## Мониторинг Docker в Prometheus
+# Мониторинг Docker в Prometheus
 
-### Docker из коробки поддерживает мониторинг с помощью Prometheus. Для того чтобы включить выгрузку данных на хосте с Docker, нужно создать файл daemon.json:
+```
+#Docker из коробки поддерживает мониторинг с помощью Prometheus. Для того чтобы включить выгрузку данных на хосте с Docker, нужно создать файл daemon.json:
      nano /etc/docker/daemon.json
 
-     # добавить 
+#Добавить 
      {
     "metrics-addr" : "ip_нашего_сервера:9323", # пишем 0.0.0.0
     "experimental" : true
@@ -247,34 +253,45 @@
 #Перезапустите Docker:
 
     systemctl restart docker && systemctl status docker
-    Для проверки можно открыть адрес http://server_ip:port/metrics
-
-### Добавление endpoint Docker в Prometheus. Чтобы поставить только что организованный endpoint на мониторинг, необходимо отредактировать файл prometheus.yml:
+    Для проверки можно открыть адрес http://server_ip:port/metrics.
+```
+## Добавление endpoint Docker в Prometheus. 
+```
+Чтобы поставить только что организованный endpoint на мониторинг, необходимо отредактировать файл prometheus.yml:
 
     nano /etc/prometheus/prometheus.yml
 
 В раздел static_configs добавьте новый endpoint. 
    
-    #пример:
+#пример:
       static_configs:
       - targets: ["localhost:9090", "localhost:9100", "localhost:9323"]  
 
-        #Вид раздела #1
+#Вид раздела #1
     static_configs:
     - targets: ['localhost:9090', 'localhost:9100', 'server_ip:9323']
        
-       #Вид раздела #2
+ #Вид раздела #2
     static_configs:
     - targets:
       - localhost:9090
       - localhost:9100
       - server_ip:9323
       
-        #Перезапустите Prometheus
+#Перезапустите Prometheus
      systemctl restart prometheus
-
+```
       
 ## Настройка GRAFANA для DOCKER
-
+```
+#Настройка собственного Dashboard
+#В интерфейсе Grafana нажмите на “+” и выберите 
+Dashboards
+#Нажмите на + New dashboard > Add new panel
+#В выпадающем меню Metrics выберите: engine > 
+engine_daemon_container_states_containers;
+#Нажмите на Apply и перейдите в интерфейс Dashboard
+#Сохраните Dashboard
+```
 ![image](https://user-images.githubusercontent.com/118117183/218322672-e31203ed-eec6-45d3-9c3c-2ef10add849c.png)
 

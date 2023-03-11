@@ -1,7 +1,8 @@
 # Prometheus
 
 ## Установка Prometheus
-```     
+
+```bash
 #Добавьте пользователя prometheus
     useradd --no-create-home --shell /bin/false prometheus
 
@@ -55,7 +56,8 @@
     sudo systemctl status prometheus
 ```
 ## Установка Node Exporter
-```
+
+```bash
 #Скачайте архив с Node Exporter и извлеките его:
     wget 
     https://github.com/prometheus/node_exporter/releases/download/v1.4.0/node_exporter-1.4.0.linux-amd64.
@@ -95,7 +97,8 @@
 ```
 
 ## Добавление Node Exporter в Prometheus
-```
+
+```bash
 #Отредактируйте конфигурацию Prometheus:
     nano /etc/prometheus/prometheus.yml
 
@@ -109,8 +112,10 @@
 #Перезапустите Prometheus:
     systemctl restart prometheus
 ```
+
 ## Установка Grafana
-```
+
+```bash
 #Скачайте и установите DEB-пакет:
     wget https://dl.grafana.com/oss/release/grafana_9.2.4_amd64.deb
     dpkg -i grafana_9.2.4_amd64.deb
@@ -135,8 +140,10 @@
     В выпадающем списке VictoriaMetrics выберите Prometheus
     Нажмите кнопку Import
 ```
-## Install alertmanager on prometheus 
-```
+
+## Install alertmanager on prometheus
+
+```bash
     wget 
     https://github.com/prometheus/alertmanager/releases/download/v0.24.0/alertmanager-0.24.0.linux-amd64.tar.gz
     tar -xvf alertmanager-*linux-amd64.tar.gz
@@ -180,9 +187,11 @@
     sudo systemctl restart prometheus
     systemctl status prometheus
              
-```             
-## Создайте файл с правилом оповещения:
 ```
+
+## Создайте файл с правилом оповещения
+
+```bash
     nano /etc/prometheus/test.yml
 
     groups: # Список групп
@@ -238,9 +247,10 @@
 #Теперь можете проверить интерфейсы Prometheus и Alertmanager, расположенные на стандартных портах 9090 и 9093
 
 ```
+
 # Мониторинг Docker в Prometheus
 
-```
+```bash
 #Docker из коробки поддерживает мониторинг с помощью Prometheus. Для того чтобы включить выгрузку данных на хосте с Docker, нужно создать файл daemon.json:
      nano /etc/docker/daemon.json
 
@@ -255,8 +265,10 @@
     systemctl restart docker && systemctl status docker
     Для проверки можно открыть адрес http://server_ip:port/metrics.
 ```
-## Добавление endpoint Docker в Prometheus. 
-```
+
+## Добавление endpoint Docker в Prometheus
+
+```bash
 Чтобы поставить только что организованный endpoint на мониторинг, необходимо отредактировать файл prometheus.yml:
 
     nano /etc/prometheus/prometheus.yml
@@ -281,9 +293,10 @@
 #Перезапустите Prometheus
      systemctl restart prometheus
 ```
-      
+
 ## Настройка GRAFANA для DOCKER
-```
+
+```bash
 #Настройка собственного Dashboard
 #В интерфейсе Grafana нажмите на “+” и выберите 
 Dashboards
@@ -293,5 +306,5 @@ engine_daemon_container_states_containers;
 #Нажмите на Apply и перейдите в интерфейс Dashboard
 #Сохраните Dashboard
 ```
-![image](https://user-images.githubusercontent.com/118117183/218322672-e31203ed-eec6-45d3-9c3c-2ef10add849c.png)
 
+![image](https://user-images.githubusercontent.com/118117183/218322672-e31203ed-eec6-45d3-9c3c-2ef10add849c.png)
